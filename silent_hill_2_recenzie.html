@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silent Hill 2 - Arhitectura Subconștientului</title>
+    <style>
+        /* =========================================
+           CORE ATMOSPHERE & RESET
+           ========================================= */
+        body, html {
+            margin: 0;
+            padding: 0;
+            background-color: #0a0a0a; /* Deep abyss black */
+            color: #d4d0c5; /* Dirty, aged paper white */
+            font-family: "Courier New", Courier, monospace; /* Typewriter feel */
+            overflow-x: hidden;
+            cursor: crosshair; /* Changes cursor to a crosshair for exploration */
+        }
+
+        /* 
+           1. THE FILM GRAIN (Static/Radio Noise Overlay)
+           Uses an SVG data URI to create a true noise texture 
+        */
+        .film-grain {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0.12;
+            background-image: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+            animation: grainShift 0.2s steps(2) infinite;
+        }
+
+        @keyframes grainShift {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-2px, 2px); }
+        }
+
+        /* 
+           2. THE FLASHLIGHT & FOG MECHANIC
+           This div covers the whole screen. Its background is updated via JS 
+           to create a transparent "hole" (the flashlight) in a dark grey fog.
+        */
+        #fog-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; /* Lets you click/hover things underneath */
+            z-index: 50;
+            /* Default state before JS kicks in */
+            background: radial-gradient(circle 250px at 50% 50%, transparent 0%, rgba(15, 15, 15, 0.98) 100%);
+            transition: background 0.1s ease;
+        }
+
+        /* =========================================
+           TYPOGRAPHY & LAYOUT
+           ========================================= */
+        article {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 15vh 30px 25vh 30px;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            margin-bottom: 50px;
+            color: #ffffff;
+            text-shadow: 2px 0px 5px rgba(255, 0, 0, 0.3); /* Subtle red rust shadow */
+            border-bottom: 1px solid #333;
+            padding-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 1.4em;
+            letter-spacing: 2px;
+            margin-top: 60px;
+            margin-bottom: 20px;
+            color: #8c887d;
+            text-transform: uppercase;
+        }
+
+        p {
+            font-size: 1.15em;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            text-align: justify;
+        }
+
+        /* 
+           3. THE GLITCH / TRAUMA WORDS
+           Words that react when the flashlight hits them
+        */
+        .trauma-word {
+            font-weight: bold;
+            color: #a82e2e; /* Dried blood red */
+            transition: all 0.2s ease;
+            display: inline-block;
+        }
+
+        .trauma-word:hover {
+            color: #ff0000;
+            text-shadow: 2px 0 0 blue, -2px 0 0 red;
+            animation: textGlitch 0.1s linear infinite;
+        }
+
+        @keyframes textGlitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 1px); }
+            40% { transform: translate(-1px, -1px); }
+            60% { transform: translate(2px, 1px); }
+            80% { transform: translate(1px, -1px); }
+            100% { transform: translate(0); }
+        }
+
+        /* Ambient rusty lines in background */
+        .rust-line {
+            position: absolute;
+            width: 1px;
+            height: 100vh;
+            background: linear-gradient(to bottom, transparent, rgba(168, 46, 46, 0.2), transparent);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Static / Grain Overlay -->
+    <div class="film-grain"></div>
+
+    <!-- The Flashlight Fog -->
+    <div id="fog-overlay"></div>
+
+    <article>
+        <h1>Estetica Vinovăției și Arhitectura Subconștientului</h1>
+        
+        <p><i>Silent Hill 2</i> este mult mai mult decât un simplu joc video — este o experiență care provoacă, tulbură și rămâne adânc ancorată în psihic. Lansat în anul 2001 de Konami, titlul a redefinit genul <i>survival horror</i> printr-o poveste intimă despre vină, reprimare și confruntarea directă cu propriul <span class="trauma-word">subconștient</span>. Într-un peisaj dominat de acțiune explozivă și efecte vizuale de fațadă, echipa de la Team Silent a ales calea opusă: tăcerea, ceața și ambiguitatea absolută.</p>
+
+        <h2>Purgatoriul Absurdului</h2>
+
+        <p>La o primă vedere, <i>Silent Hill 2</i> pare să urmeze structura clasică a unui joc horror: James Sunderland ajunge în orașul fantomă după ce primește o scrisoare de la soția sa, Mary, care murise cu trei ani în urmă. Totuși, spre deosebire de primul joc al seriei, orașul nu mai respectă o logică fizică sau ocultă, ci devine un veritabil <span class="trauma-word">purgatoriu</span> — o oglindă distorsionată a psihicului protagonistului. Fiecare locație explorată și fiecare creatură întâlnită reflectă o fărâmă reprimată din trecutul său.</p>
+
+        <p>Jocul rămâne voit ambiguu, invitând jucătorul să descifreze simboluri și să accepte, într-un sens profund camusian, absurditatea existențială. Narațiunea se remarcă printr-o execuție precisă și o armonie totală a viziunii regizorale: cinematografia, dialogul, coloana sonoră și mecanicile de joc servesc aceluiași scop. Personajele au un debit verbal sincopat, cu pauze lungi, nenaturale, părând complet deconectate de gravitatea situației lor.</p>
+
+        <p>Această deconectare este amplificată de unghiurile fixe ale camerei. Ceea ce pentru multe alte studiouri reprezenta o simplă limitare tehnică a epocii, Team Silent a transformat într-un instrument psihologic ascuțit. Un exemplu strălucit de simbolistică vizuală apare în secvența închisorii: camera este frecvent plasată în spatele gratiilor, astfel încât James, deși se află liber pe hol, este filmat ca și cum el ar fi cel încarcerat.</p>
+
+        <h2>Armonia Ludonarativă și Proiecțiile Umbrei</h2>
+
+        <p><i>Silent Hill 2</i> ne plasează în pielea unui om scindat între dorințe inavuabile și remușcări copleșitoare. James Sunderland este un protagonist ambiguu și pasiv, dar tocmai această absență a certitudinilor morale îl face o pânză universală, pe care este paradoxal de ușor să te proiectezi, deși acțiunile lui rămân adesea de neînțeles.</p>
+
+        <p>Spre deosebire de eroii standard, James este un om cu abilități mediocre. Acest detaliu narativ se traduce impecabil în mecanicile jocului: controlul este greoi, personajul nu este eficient cu armele de foc, încarcă încet și lovește ineficient. Sacrificând comoditatea mecanică a jucătorului, dezvoltatorii au evitat magistral disonanța ludonarativă. James nu este un soldat; el este un om de rând, strivit de circumstanțe, care nu luptă cu monștri propriu-ziși, ci cu proiecții ale propriei <span class="trauma-word">vinovății</span>.</p>
+
+        <p>Orașul devine astfel un spațiu liminal, în care realitatea se dizolvă în simbolism jungian:</p>
+        
+        <p><strong><span class="trauma-word">Maria</span></strong> are un comportament seducător, misterios, pozând în domnița aflată la ananghie. Dincolo de fațadă, faptul că arată exact ca soția lui James, dar este îmbrăcată provocator, este instabilă emoțional, lucrează într-un club de striptease și poartă tatuajul unui fluture, o deconspiră. Ea nu este o persoană reală, ci o fantasmă a dorinței, o <i>Anima</i> distorsionată, născută din frustrarea și negarea lui James.</p>
+        
+        <p><strong><span class="trauma-word">Pyramid Head</span></strong> (Piramidatul), cel mai iconic element al seriei, dă impresia primară de antagonist absolut. În realitate, el reprezintă o funcție psihologică internă: nevoia stringentă de pedeapsă a protagonistului. Designul său brutal — capul unghiular, greoi, de fier ruginit, mișcările lente și cuțitul târât pe asfalt — evocă greutatea chinuitoare a unei forțe inevitabile. El este călăul pe care James și l-a creat singur.</p>
+
+        <h2>Tăcerea, Ceața și Anxietatea Spațială</h2>
+
+        <p>Puține jocuri reușesc să transforme un spațiu fizic într-o stare de spirit pură. <i>Silent Hill 2</i> realizează acest lucru printr-o economie tehnică strălucită: ceața de nepătruns, străzile pustii, interioarele decrepite și un design de sunet care pare ancorat într-o altă dimensiune. Jocul nu îți <i>arată</i> groaza; el o sugerează, lăsând mintea jucătorului să umple golurile vizuale cu propria anxietate.</p>
+
+        <p>Estetica vizuală a fost impresionantă pentru anul lansării, limitările hardware fiind mascate de acea ceață densă. Aceasta funcționează nu doar ca un truc de randare, ci ca o barieră psihologică, forțând jucătorul să facă constant pași orbi în necunoscut.</p>
+
+        <p>Sunetul este pilonul central al imersiunii, grație geniului compozitorului Akira Yamaoka. Coloana sonoră induce un calm distorsionat, forțând momente de introspecție grea. Yamaoka alternează magistral între melodii melancolice sfâșietoare, zgomote industriale abrazive și o liniște absolută, asurzitoare. Când explorezi o clădire cufundată în întuneric, cu texturi de rugină și sânge uscat, absența muzicii și cacofonia zgomotelor metalice imprevizibile îți refuză orice secundă de confort.</p>
+
+        <h2>Concluzie</h2>
+
+        <p><i>Silent Hill 2</i> rămâne un monolit cultural tocmai pentru că refuză să ofere certitudini. La mai bine de două decenii de la lansare, publicul continuă să îi descifreze simbolismul. Nu este un joc despre supraviețuirea fizică, ci despre confruntarea terifiantă cu trecutul, cu dorințele reprimate și cu adevărurile pe care refuzăm să ni le admitem, impresionând constant prin reținere și sugestie.</p>
+
+        <p>Pentru mine, acest titlu depășește statutul de „joc preferat”. Este un reper artistic absolut, o experiență care demonstrează incontestabil că mediul interactiv poate fi net superior celorlalte forme de artă. Poate fi la fel de profund, poetic și tulburător ca marea literatură.</p>
+
+        <p>Adevărata groaza a jocului nu este ceea ce te așteaptă în <span class="trauma-word">ceață</span>, ci ceea ce aduci cu tine când pășești în ea.</p>
+    </article>
+
+    <script>
+        // --- The Flashlight Mechanic ---
+        const fog = document.getElementById('fog-overlay');
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+
+        // Update light position on mouse move
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            updateFlashlight();
+        });
+
+        // Also update on scroll so the light doesn't lag behind the text
+        document.addEventListener('scroll', () => {
+            updateFlashlight();
+        });
+
+        function updateFlashlight() {
+            // Creates a radial gradient that is transparent exactly where the mouse is,
+            // and turns into a 98% opaque dark gray/black at the edges.
+            fog.style.background = `radial-gradient(circle 200px at ${mouseX}px ${mouseY}px, transparent 0%, rgba(10, 10, 10, 0.98) 100%)`;
+        }
+
+        // Initialize light
+        updateFlashlight();
+
+        // --- Environmental Rust Elements ---
+        // Generates faint, dark red lines randomly in the background to simulate decay
+        for(let i = 0; i < 5; i++) {
+            let line = document.createElement('div');
+            line.className = 'rust-line';
+            line.style.left = Math.random() * 100 + 'vw';
+            line.style.top = (Math.random() * 200) - 50 + 'vh';
+            line.style.opacity = Math.random() * 0.5;
+            document.body.appendChild(line);
+        }
+    </script>
+</body>
+</html>
